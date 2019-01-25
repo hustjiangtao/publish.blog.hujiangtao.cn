@@ -1,3 +1,274 @@
-// build time:Fri Jan 25 2019 19:06:26 GMT+0800 (中国标准时间)
-var Elevator=function(n){"use strict";function e(n,e,t,o){return n/=o/2,n<1?t/2*n*n+e:(n--,-t/2*(n*(n-2)-1)+e)}function t(n,e){for(var t in e){var o=void 0===n[t]&&"function"!=typeof t;o&&(n[t]=e[t])}return n}function o(n){for(var e=0;n;)e+=n.offsetTop||0,n=n.offsetParent;return g&&(e-=g),e}function l(n){T||(T=n);var t=n-T,o=e(t,k,C-k,b);window.scrollTo(0,o),t<b?p=requestAnimationFrame(l):u()}function i(){return window.requestAnimationFrame&&window.Audio&&window.addEventListener}function a(){T=null,k=null,h=!1}function r(){y&&(C=o(y))}function u(){a(),m&&(m.pause(),m.currentTime=0),w&&w.play(),v&&v()}function d(){h&&(cancelAnimationFrame(p),a(),m&&(m.pause(),m.currentTime=0),r(),window.scrollTo(0,C))}function c(n){n.addEventListener?n.addEventListener("click",F.elevate,!1):n.attachEvent("onclick",function(){r(),document.documentElement.scrollTop=C,document.body.scrollTop=C,window.scroll(0,C)})}function s(n){A=document.body;var e={duration:void 0,mainAudio:!1,endAudio:!1,preloadAudio:!0,loopAudio:!0,startCallback:null,endCallback:null};n=t(n,e),n.element&&c(n.element),i()&&(n.duration&&(E=!0,b=n.duration),n.targetElement&&(y=n.targetElement),n.verticalPadding&&(g=n.verticalPadding),window.addEventListener("blur",d,!1),n.mainAudio&&(m=new Audio(n.mainAudio),m.setAttribute("preload",n.preloadAudio),m.setAttribute("loop",n.loopAudio)),n.endAudio&&(w=new Audio(n.endAudio),w.setAttribute("preload","true")),n.endCallback&&(v=n.endCallback),n.startCallback&&(f=n.startCallback),$(window).scroll(function(){$(window).scrollTop()>600?$(n.selector).fadeIn(500):$(n.selector).fadeOut(500)}))}var f,m,w,v,A=null,p=null,b=null,E=!1,T=null,k=null,C=0,y=null,g=null,h=!1,F=this;this.elevate=function(){h||(h=!0,k=document.documentElement.scrollTop||A.scrollTop,r(),E||(b=1.5*Math.abs(C-k)),requestAnimationFrame(l),m&&m.play(),f&&f())},s(n)};window.Elevator=Elevator;
-//rebuild by neat 
+/*!
+ * Elevator.js
+ *
+ * MIT licensed
+ * Copyright (C) 2015 Tim Holman, http://tholman.com
+ */
+
+/*********************************************
+ * Elevator.js
+ *********************************************/
+
+var Elevator = function (options) {
+
+    'use strict';
+
+    // Elements
+    var body = null;
+
+    // Scroll vars
+    var animation = null;
+    var duration = null; // ms
+    var customDuration = false;
+    var startTime = null;
+    var startPosition = null;
+    var endPosition = 0;
+    var targetElement = null;
+    var verticalPadding = null;
+    var elevating = false;
+
+    var startCallback;
+    var mainAudio;
+    var endAudio;
+    var endCallback;
+
+    var that = this;
+
+    /**
+     * Utils
+     */
+
+    // Thanks Mr Penner - http://robertpenner.com/easing/
+    function easeInOutQuad(t, b, c, d) {
+        t /= d / 2;
+        if (t < 1) return c / 2 * t * t + b;
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
+    }
+
+    function extendParameters(options, defaults) {
+        for (var option in defaults) {
+            var t = options[option] === undefined && typeof option !== "function";
+            if (t) {
+                options[option] = defaults[option];
+            }
+        }
+        return options;
+    }
+
+    function getVerticalOffset(element) {
+        var verticalOffset = 0;
+        while (element) {
+            verticalOffset += element.offsetTop || 0;
+            element = element.offsetParent;
+        }
+
+        if (verticalPadding) {
+            verticalOffset = verticalOffset - verticalPadding;
+        }
+
+        return verticalOffset;
+    }
+
+    /**
+     * Main
+     */
+
+    // Time is passed through requestAnimationFrame, what a world!
+    function animateLoop(time) {
+        if (!startTime) {
+            startTime = time;
+        }
+
+        var timeSoFar = time - startTime;
+        var easedPosition = easeInOutQuad(timeSoFar, startPosition, endPosition - startPosition, duration);
+
+        window.scrollTo(0, easedPosition);
+
+        if (timeSoFar < duration) {
+            animation = requestAnimationFrame(animateLoop);
+        } else {
+            animationFinished();
+        }
+    }
+
+    //            ELEVATE!
+    //              /
+    //         ____
+    //       .'    '=====<0
+    //       |======|
+    //       |======|
+    //       [IIIIII[\--()
+    //       |_______|
+    //       C O O O D
+    //      C O  O  O D
+    //     C  O  O  O  D
+    //     C__O__O__O__D
+    //    [_____________]
+    this.elevate = function () {
+
+        if (elevating) {
+            return;
+        }
+
+        elevating = true;
+        startPosition = (document.documentElement.scrollTop || body.scrollTop);
+        updateEndPosition();
+
+        // No custom duration set, so we travel at pixels per millisecond. (0.75px per ms)
+        if (!customDuration) {
+            duration = (Math.abs(endPosition - startPosition) * 1.5);
+        }
+
+        requestAnimationFrame(animateLoop);
+
+        // Start music!
+        if (mainAudio) {
+            mainAudio.play();
+        }
+
+        if (startCallback) {
+            startCallback();
+        }
+    };
+
+    function browserMeetsRequirements() {
+        return window.requestAnimationFrame && window.Audio && window.addEventListener;
+    }
+
+    function resetPositions() {
+        startTime = null;
+        startPosition = null;
+        elevating = false;
+    }
+
+    function updateEndPosition() {
+        if (targetElement) {
+            endPosition = getVerticalOffset(targetElement);
+        }
+    }
+
+    function animationFinished() {
+
+        resetPositions();
+
+        // Stop music!
+        if (mainAudio) {
+            mainAudio.pause();
+            mainAudio.currentTime = 0;
+        }
+
+        if (endAudio) {
+            endAudio.play();
+        }
+
+        if (endCallback) {
+            endCallback();
+        }
+    }
+
+    function onWindowBlur() {
+
+        // If animating, go straight to the top. And play no more music.
+        if (elevating) {
+
+            cancelAnimationFrame(animation);
+            resetPositions();
+
+            if (mainAudio) {
+                mainAudio.pause();
+                mainAudio.currentTime = 0;
+            }
+
+            updateEndPosition();
+            window.scrollTo(0, endPosition);
+        }
+    }
+
+    function bindElevateToElement(element) {
+        if (element.addEventListener) {
+            element.addEventListener('click', that.elevate, false);
+        } else {
+            // Older browsers
+            element.attachEvent('onclick', function () {
+                updateEndPosition();
+                document.documentElement.scrollTop = endPosition;
+                document.body.scrollTop = endPosition;
+                window.scroll(0, endPosition);
+            });
+        }
+    }
+
+    function init(_options) {
+        // Bind to element click event, if need be.
+        body = document.body;
+
+        var defaults = {
+            duration: undefined,
+            mainAudio: false,
+            endAudio: false,
+            preloadAudio: true,
+            loopAudio: true,
+            startCallback: null,
+            endCallback: null
+        };
+
+        _options = extendParameters(_options, defaults);
+
+        if (_options.element) {
+            bindElevateToElement(_options.element);
+        }
+
+        // Take the stairs instead
+        if (!browserMeetsRequirements()) {
+            return;
+        }
+
+        if (_options.duration) {
+            customDuration = true;
+            duration = _options.duration;
+        }
+
+        if (_options.targetElement) {
+            targetElement = _options.targetElement;
+        }
+
+        if (_options.verticalPadding) {
+            verticalPadding = _options.verticalPadding;
+        }
+
+        window.addEventListener('blur', onWindowBlur, false);
+
+        if (_options.mainAudio) {
+            mainAudio = new Audio(_options.mainAudio);
+            mainAudio.setAttribute('preload', _options.preloadAudio);
+            mainAudio.setAttribute('loop', _options.loopAudio);
+        }
+
+        if (_options.endAudio) {
+            endAudio = new Audio(_options.endAudio);
+            endAudio.setAttribute('preload', 'true');
+        }
+
+        if (_options.endCallback) {
+            endCallback = _options.endCallback;
+        }
+
+        if (_options.startCallback) {
+            startCallback = _options.startCallback;
+        }
+        /**
+         * 滚动事件
+         */
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > 600) {
+                $(_options['selector']).fadeIn(500);
+            } else {
+                $(_options['selector']).fadeOut(500);
+            }
+        });
+    }
+    init(options);
+};
+
+window.Elevator = Elevator;
