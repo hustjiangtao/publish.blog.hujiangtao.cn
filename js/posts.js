@@ -1,1 +1,3 @@
-[{"title":"Hello World","date":"2019.01.24","uri":"2019/01/hello-world/","excerpt":""}]
+// build time:Fri Jan 25 2019 19:06:25 GMT+0800 (中国标准时间)
+
+//rebuild by neat 
