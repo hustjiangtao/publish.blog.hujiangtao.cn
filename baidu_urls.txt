@@ -1,1 +1,4 @@
+https://blog.hujiangtao.cn/2019/02/学习记录002/
+https://blog.hujiangtao.cn/2019/02/学习记录001/
+https://blog.hujiangtao.cn/2019/02/redis官网pipeline/
 https://blog.hujiangtao.cn/2019/01/hql工作/

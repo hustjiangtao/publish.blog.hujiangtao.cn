@@ -2,16 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://blog.hujiangtao.cn/2019/01/hql%E5%B7%A5%E4%BD%9C/</loc>
+    <loc>https://blog.hujiangtao.cn/2019/02/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95002/</loc>
     
-    <lastmod>2019-01-28T04:56:22.345Z</lastmod>
+    <lastmod>2019-02-20T06:55:08.002Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.hujiangtao.cn/2019/01/hello-world/</loc>
+    <loc>https://blog.hujiangtao.cn/2019/02/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95001/</loc>
     
-    <lastmod>2019-01-25T12:50:53.281Z</lastmod>
+    <lastmod>2019-02-20T06:53:20.788Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.hujiangtao.cn/2019/02/redis%E5%AE%98%E7%BD%91pipeline/</loc>
+    
+    <lastmod>2019-02-20T06:51:35.995Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.hujiangtao.cn/2019/01/hql%E5%B7%A5%E4%BD%9C/</loc>
+    
+    <lastmod>2019-01-28T04:56:22.345Z</lastmod>
     
   </url>
   

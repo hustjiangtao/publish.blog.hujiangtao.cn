@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://blog.hujiangtao.cn/2019/02/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95002/</loc>
+    <lastmod>2019-02-20</lastmod>
+  </url>  <url>
+    <loc>https://blog.hujiangtao.cn/2019/02/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95001/</loc>
+    <lastmod>2019-02-20</lastmod>
+  </url>  <url>
+    <loc>https://blog.hujiangtao.cn/2019/02/redis%E5%AE%98%E7%BD%91pipeline/</loc>
+    <lastmod>2019-02-20</lastmod>
+  </url>  <url>
     <loc>https://blog.hujiangtao.cn/2019/01/hql%E5%B7%A5%E4%BD%9C/</loc>
     <lastmod>2019-01-28</lastmod>
-  </url>  <url>
-    <loc>https://blog.hujiangtao.cn/2019/01/hello-world/</loc>
-    <lastmod>2019-01-25</lastmod>
   </url>
 </urlset>
